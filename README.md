@@ -1,1 +1,1 @@
-Tetris game made with raylib in C language
+Tetris game made in C language with raylib library
