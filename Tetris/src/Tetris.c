@@ -6,6 +6,7 @@
 #include "GridMngr.h"
 #include "Tetromino.h"
 #include "DrawTextMngr.h"
+#include <stdbool.h>
 
 const int windowWidth = 600;
 const int windowHeight = 700;
@@ -14,6 +15,8 @@ char scoreLbl[20] = "SCORE: ";
 char scoreTxt[12] = "0";
 // int score = 2147483646;
 int score = 0;
+
+bool isGamePaused = false;
 
 int isGameOver = 0;
 float gameOverCountDown = 3;
@@ -90,14 +93,30 @@ void InitGame()
     PlayMusicStream(mainLoopMusic);
 
     isMainLoopMusicStopped = 0;
+
+    isGamePaused = false;
 }
 
 void LoadAudio()
 {
-    mainLoopMusic = LoadMusicStream("assets/tetris_main_loop.mp3");
+    mainLoopMusic = LoadMusicStream("assets/audio/tetris_main_loop.mp3");
 }
 
-int main(int argc, char **argv /*, char **environ*/)
+void UpdatePausedGame()
+{
+    BeginDrawing();
+    ClearBackground(BLUE);
+
+    DrawStage();
+    DrawTetromino(colorTypes[currentColorIndex], tetrominoTypes[currentTetrominoType][currentRotation]);
+
+    DrawTexts();
+
+    EndDrawing();
+}
+
+// int main(int argc, char **argv /*, char **environ*/)
+int WinMain(int argc, char **argv)
 {
     InitAudioDevice();
     LoadAudio();
@@ -105,6 +124,12 @@ int main(int argc, char **argv /*, char **environ*/)
     InitGame();
 
     InitWindow(windowWidth, windowHeight, "Tetris");
+
+    //application image icon
+    Image appImageIcon = LoadImage("assets/imgs/TTetromino.png");
+    SetWindowIcon(appImageIcon);
+
+    UnloadImage(appImageIcon);
 
     // sets Vsync
     SetTargetFPS(60);
@@ -126,6 +151,7 @@ int main(int argc, char **argv /*, char **environ*/)
     {
         if (isGameOver)
         {
+            //resets the game
             if (IsKeyPressed(KEY_R))
             {
                 InitGame();
@@ -134,24 +160,29 @@ int main(int argc, char **argv /*, char **environ*/)
                 gameOverCountDown = 3;
             }
 
-            BeginDrawing();
-            ClearBackground(BLUE);
-
-            DrawStage();
-            DrawTetromino(colorTypes[currentColorIndex], tetrominoTypes[currentTetrominoType][currentRotation]);
-
-            DrawTexts();
-
-            EndDrawing();
-
+            UpdatePausedGame();
             continue;
         }
 
-        if(IsKeyPressed(KEY_P))
+        //pause the game
+        if (IsKeyPressed(KEY_Q))
+        {
+            isGamePaused = !isGamePaused;
+        }
+
+        if(isGamePaused)
+        {
+            UpdatePausedGame();
+            continue;
+        }
+        //end pause the game
+
+        //toggle main loop music
+        if (IsKeyPressed(KEY_M))
         {
             isMainLoopMusicStopped = !isMainLoopMusicStopped;
 
-            if(isMainLoopMusicStopped)
+            if (isMainLoopMusicStopped)
             {
                 StopMusicStream(mainLoopMusic);
             }
@@ -161,7 +192,6 @@ int main(int argc, char **argv /*, char **environ*/)
                 PlayMusicStream(mainLoopMusic);
             }
         }
-
 
         UpdateMusicStream(mainLoopMusic); // Update mainLoopMusic buffer with new stream data
 
