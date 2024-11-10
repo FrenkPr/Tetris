@@ -1,6 +1,10 @@
 # Tetris
 Tetris game made in C language with raylib library during AIV 3rd year.
 
+# Compile instructions
+To compile, execute the compile.bat file. The executable, once compiled, will be found in the "bin" folder.<br/>
+Clang is required for compiling!
+
 # Controls
 Left/Right Arrows &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;move to left/right
 
